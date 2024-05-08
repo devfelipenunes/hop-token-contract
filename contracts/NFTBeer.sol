@@ -13,8 +13,8 @@ contract NFTBeer is ERC721URIStorage {
     address contractAddress;
     address owner;
 
-    constructor(address marketplaceAddress) ERC721("OpenC", "OPC") {
-        contractAddress = marketplaceAddress;
+    constructor(address hopTokenAddress) ERC721("HopToken", "HT") {
+        contractAddress = hopTokenAddress;
         owner = msg.sender;
     }
 

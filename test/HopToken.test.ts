@@ -29,7 +29,16 @@ describe("HopToken", function () {
       deployFixture
     );
 
-    console.log("hopToken", hopToken.address);
-    console.log("nftRecipe", nftRecipeAddress);
+    const listingPrice = (await hopToken.listingPrice()).toString();
+    const auctionPrice = ethers.utils.parseUnits("1", "ether");
+
+    await nftRecipe.mint("metadata uri");
+    await hopToken.createNFTRecipe(nftRecipeAddress, 1, auctionPrice, {
+      value: listingPrice,
+    });
+
+    const marketItems = await hopToken.fetchRecipes();
+
+    expect(marketItems.length).to.equal(1);
   });
 });

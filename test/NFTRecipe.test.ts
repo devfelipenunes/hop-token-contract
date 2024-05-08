@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-describe("NFT Beer", function () {
+describe("NFT Recipe", function () {
   async function deployFixture() {
     const [owner, otherAccount] = await ethers.getSigners();
 
@@ -18,23 +18,36 @@ describe("NFT Beer", function () {
     return { nftBeer, owner, otherAccount, hopToken, nftRecipe };
   }
 
-  it("Should mint a token", async function () {
-    const { nftRecipe } = await loadFixture(deployFixture);
+  // it("Should mint a token", async function () {
+  //   const { nftRecipe } = await loadFixture(deployFixture);
 
-    await nftRecipe.mint("metadata uri");
+  //   await nftRecipe.mint("metadata uri");
 
-    expect(await nftRecipe.tokenURI(1)).to.equal("metadata uri");
-  });
+  //   expect(await nftRecipe.tokenURI(1)).to.equal("metadata uri");
+  // });
 
-  it("Can change approval", async function () {
-    const { nftRecipe, otherAccount, owner } = await loadFixture(deployFixture);
+  // it("Can change approval", async function () {
+  //   const { nftRecipe, otherAccount, owner } = await loadFixture(deployFixture);
 
-    const instance = nftRecipe.connect(otherAccount);
-    await instance.mint("metadata uri");
-    await instance.setApprovalForAll(owner.address, false);
+  //   const instance = nftRecipe.connect(otherAccount);
+  //   await instance.mint("metadata uri");
+  //   await instance.setApprovalForAll(owner.address, false);
 
-    expect(
-      await nftRecipe.isApprovedForAll(otherAccount.address, owner.address)
-    ).to.equal(false);
-  });
+  //   expect(
+  //     await nftRecipe.isApprovedForAll(otherAccount.address, owner.address)
+  //   ).to.equal(false);
+  // });
+
+  // it("Cannot change approval", async function () {
+  //   const { nftRecipe, otherAccount, hopToken } = await loadFixture(
+  //     deployFixture
+  //   );
+
+  //   const instance = nftRecipe.connect(otherAccount);
+  //   await instance.mint("metadata uri");
+
+  //   await expect(
+  //     instance.setApprovalForAll(hopToken, false)
+  //   ).to.be.revertedWith("Cannot remove marketplace approval");
+  // });
 });

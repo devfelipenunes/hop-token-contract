@@ -7,12 +7,14 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+// Mint 5 token
+
 contract HopToken is ReentrancyGuard {
     uint256 private _itemIds;
     uint256 private _itemsSold;
 
     address payable owner;
-    uint public listingPrice = 0.025 ether;
+    uint public listingPrice = 0.001 ether;
 
     constructor() {
         owner = payable(msg.sender);

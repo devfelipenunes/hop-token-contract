@@ -11,7 +11,7 @@ async function main() {
   await nftBeer.deployed();
   console.log(`NFTBeer deployed to ${nftBeer.address}`);
 
-  const NFTRecipe = await ethers.getContractFactory("NFTRecipe");
+  const NFTRecipe = await ethers.getContractFactory("NFTRecipeV2");
   const nftRecipe = await NFTRecipe.deploy(hopToken.address);
   await nftRecipe.deployed();
   console.log(`NFTRecipe deployed to ${nftRecipe.address}`);
