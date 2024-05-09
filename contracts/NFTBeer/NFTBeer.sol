@@ -7,7 +7,7 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract NFTRecipe is ERC721URIStorage {
+contract NFTBeer is ERC721URIStorage {
     uint256 private _tokenIds;
 
     address contractAddress;
@@ -22,6 +22,7 @@ contract NFTRecipe is ERC721URIStorage {
         uint tokenId = ++_tokenIds;
 
         _mint(msg.sender, tokenId);
+
         _setTokenURI(tokenId, uri);
         setApprovalForAll(contractAddress, true);
 

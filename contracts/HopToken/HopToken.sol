@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
-
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-
-// Mint 5 token
+import "./INFTRecipe.sol";
+import "./INFTBeer.sol";
 
 contract HopToken is ReentrancyGuard {
     uint256 private _itemIds;
@@ -40,8 +38,8 @@ contract HopToken is ReentrancyGuard {
         bool sold;
     }
 
-    mapping(uint => Recipe) public recipes; //item id => recipes
-    mapping(uint => Beer) public beers; //item id => recipes
+    mapping(uint => Recipe) public recipes;
+    mapping(uint => Beer) public beers;
 
     event NFTRecipeCreated(
         uint indexed itemId,
@@ -69,6 +67,7 @@ contract HopToken is ReentrancyGuard {
 
         uint itemId = ++_itemIds;
 
+        INFTBeer(nftBeer).mint(msg.sender, tokenId);
         beers[itemId] = Beer(
             itemId,
             nftBeer,
@@ -78,8 +77,6 @@ contract HopToken is ReentrancyGuard {
             price,
             false
         );
-
-        IERC721(nftBeer).transferFrom(msg.sender, address(this), tokenId);
 
         emit NFTBeerCreated(itemId, nftBeer, tokenId, msg.sender, price);
     }
@@ -182,6 +179,7 @@ contract HopToken is ReentrancyGuard {
 
         uint itemId = ++_itemIds;
 
+        INFTRecipe(nftRecipe).mint(msg.sender, tokenId);
         recipes[itemId] = Recipe(
             itemId,
             nftRecipe,
@@ -191,8 +189,6 @@ contract HopToken is ReentrancyGuard {
             price,
             false
         );
-
-        IERC721(nftRecipe).transferFrom(msg.sender, address(this), tokenId);
 
         emit NFTRecipeCreated(itemId, nftRecipe, tokenId, msg.sender, price);
     }

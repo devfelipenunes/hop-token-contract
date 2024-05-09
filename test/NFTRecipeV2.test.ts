@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-describe("NFT Recipe", function () {
+describe("NFT RecipeV3", function () {
   async function deployFixture() {
     const [owner, otherAccount] = await ethers.getSigners();
 
@@ -19,16 +19,16 @@ describe("NFT Recipe", function () {
     return { owner, otherAccount, hopToken, nftRecipe, nftRecipeAddress };
   }
 
-  // it("Should mint a token", async function () {
-  //   const { nftRecipe, owner } = await loadFixture(deployFixture);
+  it("Should mint a token", async function () {
+    const { nftRecipe, owner } = await loadFixture(deployFixture);
 
-  //   console.log(await nftRecipe.mint("uri", { gasLimit: 5000000 }));
-  //   // const overrides = {
-  //   //   gasLimit: 5000000,
-  //   // };
+    await nftRecipe.mint(0, { value: ethers.utils.parseEther("0.01") });
+    const balance = await nftRecipe.balanceOf(owner.address, 0);
+    const supply = await nftRecipe.currentSupply(0);
 
-  //   // await nftRecipe.mint("uri", overrides);
+    console.log({ balance, supply });
 
-  //   expect(await nftRecipe.uri(1)).to.equal("uri");
-  // });
+    expect(balance).to.equal(1, "Cannot mint");
+    expect(supply).to.equal(49, "Cannot mint");
+  });
 });
