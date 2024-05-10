@@ -1,81 +1,56 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 
-contract NFTRecipeV2 is Context, ERC721URIStorage {
-    uint256 private _tokenIds;
-    mapping(uint256 => uint256[]) private _royalties;
+contract NFTRecipe is ERC1155, ERC1155Burnable, ERC1155URIStorage {
+    uint256 private _recipeIds;
+
+    uint256 public constant RECIPE = 0;
+    uint256 public constant ROYALTY = 1;
+    uint256[] listIds = [RECIPE, ROYALTY];
+    uint256[] listAmounts = [10 ** 27, 5];
+
+    uint public tokenPrice = 0.001 ether;
 
     address contractAddress;
-    address owner;
+    address payable public immutable owner;
 
-    constructor(address hopTokenContract) ERC721("HopToken", "HT") {
-        contractAddress = hopTokenContract;
-        owner = _msgSender();
+    mapping(uint256 => string[]) tokenURIs;
+
+    constructor(address marketplaceAddress) ERC1155("") {
+        // constructor() ERC1155("") {
+        contractAddress = marketplaceAddress;
+        owner = payable(msg.sender);
     }
 
-    function mint(string memory uri) public returns (uint256) {
-        uint256 tokenId = ++_tokenIds;
+    function mint(string[] memory URIs) public returns (uint) {
+        uint recipeIds = ++_recipeIds;
 
-        _mint(owner, tokenId);
-        _setTokenURI(tokenId, uri);
+        for (uint i = 0; i < listIds.length; i++) {
+            tokenURIs[listIds[i]] = [URIs[i]];
+            _mint(msg.sender, listIds[i], listAmounts[i], "");
+        }
 
-        mintSemiFungible(owner, tokenId);
-
-        _royalties[tokenId] = [1, 2, 3, 4, 5];
-
-        setApprovalForAll(contractAddress, true);
-
-        return tokenId;
+        return recipeIds;
     }
 
-    function mintSemiFungible(address to, uint256 tokenId) private {
-        uint256[] memory amounts = new uint256[](1);
-        amounts[0] = 12 ** 10;
-        uint256[] memory ids = new uint256[](1);
-        ids[0] = tokenId;
-        address[] memory senders = new address[](1);
-        senders[0] = address(this);
-        ERC1155(contractAddress).safeBatchTransferFrom(
-            address(this),
-            to,
-            ids,
-            amounts,
-            ""
-        );
+    function uri(
+        uint256 tokenId
+    ) public view override(ERC1155, ERC1155URIStorage) returns (string memory) {
+        return tokenURIs[tokenId][tokenId % tokenURIs[tokenId].length];
     }
 
     function setApprovalForAll(
         address operator,
         bool approved
-    ) public override(ERC721, IERC721) {
+    ) public override(ERC1155) {
         require(
             _msgSender() == owner || operator != contractAddress || approved,
             "Cannot remove marketplace approval"
         );
-        super.setApprovalForAll(operator, approved);
-    }
-
-    function isApprovedForAll(
-        address account,
-        address operator
-    ) public view override(ERC721, IERC721) returns (bool) {
-        return ERC1155(contractAddress).isApprovedForAll(account, operator);
-    }
-
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view override returns (bool) {
-        return
-            super.supportsInterface(interfaceId) ||
-            ERC1155(contractAddress).supportsInterface(interfaceId);
-    }
-
-    function royalties(uint256 tokenId) public view returns (uint256[] memory) {
-        return _royalties[tokenId];
+        _setApprovalForAll(_msgSender(), operator, approved);
     }
 }

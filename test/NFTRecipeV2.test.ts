@@ -6,29 +6,32 @@ describe("NFT Recipe", function () {
   async function deployFixture() {
     const [owner, otherAccount] = await ethers.getSigners();
 
-    const HopToken = await ethers.getContractFactory("HopToken");
-    const hopToken = await HopToken.deploy();
+    // const HopToken = await ethers.getContractFactory("HopToken");
+    // const hopToken = await HopToken.deploy();
 
     // const NFTBeer = await ethers.getContractFactory("NFTBeer");
     // const nftBeer = await NFTBeer.deploy(hopToken.address);
 
     const NFTRecipe = await ethers.getContractFactory("NFTRecipeV2");
-    const nftRecipe = await NFTRecipe.deploy(hopToken.address);
+    const nftRecipe = await NFTRecipe.deploy({
+      gasLimit: 8000000,
+    });
+    // const nftRecipe = await NFTRecipe.deploy(hopToken.address);
     const nftRecipeAddress = nftRecipe.address;
 
-    return { owner, otherAccount, hopToken, nftRecipe, nftRecipeAddress };
+    return { owner, otherAccount, nftRecipe, nftRecipeAddress };
   }
 
-  // it("Should mint a token", async function () {
-  //   const { nftRecipe, owner } = await loadFixture(deployFixture);
+  it("Should mint a token", async function () {
+    const { nftRecipe, owner } = await loadFixture(deployFixture);
 
-  //   console.log(await nftRecipe.mint("uri", { gasLimit: 5000000 }));
-  //   // const overrides = {
-  //   //   gasLimit: 5000000,
-  //   // };
+    console.log(nftRecipe.address);
+    // const overrides = {
+    //   gasLimit: 5000000,
+    // };
 
-  //   // await nftRecipe.mint("uri", overrides);
+    // await nftRecipe.mint("uri", overrides);
 
-  //   expect(await nftRecipe.uri(1)).to.equal("uri");
-  // });
+    expect(await nftRecipe.uri(1)).to.equal("uri");
+  });
 });
